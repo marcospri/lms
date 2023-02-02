@@ -205,28 +205,41 @@ export type Product = {
  * the backend code.
  */
 export type ConfigObject = {
+  /** Sets which frontend app is being launched. */
   mode: AppMode;
+
+  // Configuration available in all modes.
   api: {
     authToken: string;
+
+    // Available only in "basic-lti-launch" mode.
     sync: APICallInfo;
     viaUrl: APICallInfo;
   };
+  dev: boolean;
+  debug?: DebugInfo;
+  product: Product;
+
+  // Available in "content-item-selection" mode.
+  filePicker: FilePickerConfig;
+
+  // Available in "oauth2-redirect-error" mode.
+  OAuth2RedirectError: OAuthErrorConfig;
+
+  // Available in "error-dialog" mode.
+  errorDialog: ErrorDialogConfig;
+
+  // Available in "basic-lti-launch" mode.
   canvas: {
-    speedGrader: SpeedGraderConfig;
+    speedGrader?: SpeedGraderConfig;
   };
   contentBanner?: ContentBannerConfig;
-  dev: boolean;
-  filePicker: FilePickerConfig;
-  grading: GradingConfig;
+  grading?: GradingConfig;
   hypothesisClient: ClientConfig;
   rpcServer: {
     allowedOrigins: string[];
   };
   viaUrl: string;
-  OAuth2RedirectError: OAuthErrorConfig;
-  errorDialog: ErrorDialogConfig;
-  debug?: DebugInfo;
-  product: Product;
 };
 
 /**
