@@ -11,7 +11,7 @@
     "build": "gulp build",
     "checkformatting": "prettier --cache --check lms/**/*.{js,scss,ts,tsx}",
     "format": "prettier --cache --list-different --write lms/**/*.{js,scss,ts,tsx}",
-    "lint": "eslint --cache --ignore-pattern build .",
+    "lint": "eslint --cache --ignore-pattern build --ignore-pattern coverage .",
     "test": "gulp test",
     "typecheck": "tsc --build lms/static/scripts/tsconfig.json"
   },
