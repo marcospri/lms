@@ -5,6 +5,10 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "lms/static/scripts"
+  },
   "plugins": ["@typescript-eslint"],
   "rules": {
     "prefer-arrow-callback": "error",
@@ -31,13 +35,37 @@
     //   exports is not enabled yet because that requires setting up type-aware
     //   linting.
     "@typescript-eslint/consistent-type-assertions": "error",
-    "@typescript-eslint/consistent-type-imports": "error"
+    "@typescript-eslint/consistent-type-imports": "error",
+
+    // Added TS rules
+    "@typescript-eslint/no-unnecessary-condition": "error"
   },
   "overrides": [
     {
       "files": "*.mjs",
       "env": { "node": true },
-      "parserOptions": { "sourceType": "module" }
+      "parserOptions": {
+        "project": null,
+        "sourceType": "module"
+      },
+      "rules": {
+        "@typescript-eslint/no-unnecessary-condition": "off"
+      }
+    },
+    {
+      "files": [
+        "lms/static/scripts/bootstrap.js",
+        "lms/static/scripts/karma.config.js",
+        "lms/static/scripts/new-application-instance.js",
+        "lms/static/scripts/{browser_check,postmessage_json_rpc,test-util,ui-playground}/**",
+        "lms/**/test/*"
+      ],
+      "parserOptions": {
+        "project": null,
+      },
+      "rules": {
+        "@typescript-eslint/no-unnecessary-condition": "off"
+      }
     }
   ]
 }
