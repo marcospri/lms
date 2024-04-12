@@ -8,6 +8,7 @@ import {
   ScrollContainer,
 } from '@hypothesis/frontend-shared';
 import type { DataTableProps } from '@hypothesis/frontend-shared';
+import classnames from 'classnames';
 import type { ComponentChildren } from 'preact';
 import type { JSX } from 'preact';
 import { useMemo, useState } from 'preact/hooks';
@@ -32,6 +33,8 @@ export type DocumentListProps = {
   noDocumentsMessage?: ComponentChildren;
   /** Component title for accessibility */
   title: string;
+  /** If true, the user cannot change the selection. */
+  disabled?: boolean;
 };
 
 type IconComponent = (props: { className?: string }) => JSX.Element;
@@ -100,6 +103,7 @@ function formatDuration(duration: number): string {
  * List of files and folders in a file picker.
  */
 export default function DocumentList({
+  disabled,
   documents,
   isLoading = false,
   selectedDocument,
@@ -150,7 +154,12 @@ export default function DocumentList({
         }
 
         return (
-          <div className="flex flex-row items-center gap-x-2">
+          <div
+            data-testid="display-name-cell"
+            className={classnames('flex flex-row items-center gap-x-2', {
+              'opacity-50': disabled,
+            })}
+          >
             {thumbnail ?? icon}
             <span data-testid="display-name">{document.display_name}</span>
           </div>
@@ -172,8 +181,8 @@ export default function DocumentList({
           loading={isLoading}
           rows={documents}
           selectedRow={selectedDocument}
-          onSelectRow={onSelectDocument}
-          onConfirmRow={onUseDocument}
+          onSelectRow={disabled ? undefined : onSelectDocument}
+          onConfirmRow={disabled ? undefined : onUseDocument}
           renderItem={renderItem}
           borderless
         />

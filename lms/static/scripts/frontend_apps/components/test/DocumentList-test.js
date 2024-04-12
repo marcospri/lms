@@ -141,6 +141,26 @@ describe('DocumentList', () => {
     assert.isTrue(wrapper.exists('[data-testid="no-files-message"]'));
   });
 
+  [true, false].forEach(disabled => {
+    it('disables table if `disabled` prop is true', () => {
+      const onSelectDocument = sinon.stub();
+      const onUseDocument = sinon.stub();
+
+      const wrapper = renderDocumentList({
+        disabled,
+        onSelectDocument,
+        onUseDocument,
+      });
+      const cell = wrapper.find('[data-testid="display-name-cell"]');
+      cell.simulate('click');
+      cell.simulate('dblclick');
+
+      assert.equal(cell.prop('className').includes('opacity-50'), disabled);
+      assert.equal(onSelectDocument.called, !disabled);
+      assert.equal(onUseDocument.called, !disabled);
+    });
+  });
+
   it(
     'should pass a11y checks',
     checkAccessibility([
