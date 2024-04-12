@@ -95,6 +95,9 @@ class File(TypedDict):
     contents: NotRequired[APICallInfo]
     """API call to use to fetch contents of a folder."""
 
+    check: NotRequired[APICallInfo]
+    """API call to check usability of file for assignment."""
+
 
 def replace_localhost_in_url(url: str) -> str:
     """
@@ -259,6 +262,12 @@ class CanvasStudioService:
                     # We handle this on the frontend by rendering fallback
                     # content if the thumbnail fails to load for any reason.
                     "thumbnail_url": item.get("thumbnail_url", None),
+                    "check": {
+                        "path": self._request.route_url(
+                            "canvas_studio_api.media.check",
+                            media_id=str(media_id),
+                        )
+                    },
                 }
             )
 

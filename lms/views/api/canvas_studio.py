@@ -123,6 +123,21 @@ def list_collection(request):
 
 @view_config(
     request_method="GET",
+    route_name="canvas_studio_api.media.check",
+    renderer="json",
+    permission=Permissions.API,
+)
+def check_media(request):
+    svc = request.find_service(CanvasStudioService)
+    media_id = request.matchdict["media_id"]
+    transcript_url = svc.get_transcript_url(media_id)
+    if not transcript_url:
+        raise HTTPBadRequest("This video does not have a published transcript")
+    return {}
+
+
+@view_config(
+    request_method="GET",
     route_name="canvas_studio_api.via_url",
     renderer="json",
     permission=Permissions.API,

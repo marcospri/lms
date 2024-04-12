@@ -81,6 +81,29 @@ def test_list_collection(canvas_studio_service, pyramid_request):
     assert result == canvas_studio_service.list_collection.return_value
 
 
+class TestCheckMedia:
+    def test_it_succeeds_if_transcript_available(
+        self, canvas_studio_service, pyramid_request
+    ):
+        pyramid_request.matchdict["media_id"] = "abc"
+        canvas_studio_service.get_transcript_url.return_value = (
+            "https://cdn.videos.com/transcripts/abc"
+        )
+        result = views.check_media(pyramid_request)
+        assert result == {}
+
+    def test_it_raises_if_transcript_missing(
+        self, canvas_studio_service, pyramid_request
+    ):
+        pyramid_request.matchdict["media_id"] = "abc"
+        canvas_studio_service.get_transcript_url.return_value = None
+
+        with pytest.raises(
+            HTTPBadRequest, match="This video does not have a published transcript"
+        ):
+            views.check_media(pyramid_request)
+
+
 @pytest.mark.usefixtures("canvas_studio_service", "assignment_service")
 class TestViaURL:
     def test_it(self, canvas_studio_service, pyramid_request, via_video_url):
