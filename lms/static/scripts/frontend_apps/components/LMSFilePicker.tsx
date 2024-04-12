@@ -1,5 +1,6 @@
 import {
   Button,
+  CautionIcon,
   ModalDialog,
   SpinnerOverlay,
 } from '@hypothesis/frontend-shared';
@@ -8,7 +9,7 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 
 import type { File, Folder } from '../api-types';
 import type { APICallInfo } from '../config';
-import { isAuthorizationError } from '../errors';
+import { formatErrorMessage, isAuthorizationError } from '../errors';
 import { apiCall } from '../utils/api';
 import AuthButton from './AuthButton';
 import Breadcrumbs from './Breadcrumbs';
@@ -180,6 +181,10 @@ export default function LMSFilePicker({
 
   const [selectedFile, setSelectedFile] = useState<File | Folder | null>(null);
 
+  const [checkingFile, setCheckingFile] = useState(false);
+
+  const [fileProblem, setFileProblem] = useState<string | null>(null);
+
   // Array of Folder objects representing the "path" to the current list of
   // files being displayed. This always starts at the root. The last element
   // represents the current directory path.  Every item can potentially have
@@ -308,14 +313,26 @@ export default function LMSFilePicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderPath]);
 
-  const confirmSelectedItem = (file: File | Folder | null = selectedFile) => {
+  const confirmSelectedItem = async (
+    file: File | Folder | null = selectedFile,
+  ) => {
     if (!file) {
       return;
     }
     if (file.type === 'Folder') {
       onChangePath(file);
-    } else {
+    } else if (!file.check) {
       onSelectFile(file);
+    } else {
+      setCheckingFile(true);
+      try {
+        await apiCall<unknown>({ authToken, path: file.check.path });
+        onSelectFile(file);
+      } catch (err) {
+        setFileProblem(formatErrorMessage(err));
+      } finally {
+        setCheckingFile(false);
+      }
     }
   };
 
@@ -339,7 +356,8 @@ export default function LMSFilePicker({
         continueAction = {
           type: 'select',
           label: 'Select',
-          disabled: selectedFile === null,
+          disabled:
+            selectedFile === null || fileProblem !== null || checkingFile,
         };
       }
       break;
@@ -451,11 +469,15 @@ export default function LMSFilePicker({
           )}
           <DocumentList
             title={`List of ${documentType}s`}
+            disabled={checkingFile}
             documents={dialogState.state === 'fetched' ? dialogState.files : []}
             isLoading={dialogState.state === 'fetching'}
             selectedDocument={selectedFile}
             onUseDocument={confirmSelectedItem}
-            onSelectDocument={setSelectedFile}
+            onSelectDocument={file => {
+              setSelectedFile(file);
+              setFileProblem(null);
+            }}
             noDocumentsMessage={
               <NoFilesMessage
                 href={missingFilesHelpLink}
@@ -464,6 +486,24 @@ export default function LMSFilePicker({
               />
             }
           />
+          <div aria-live="assertive">
+            {fileProblem && (
+              <div
+                data-testid="file-problem"
+                className="flex flex-row items-center space-x-3 px-3 py-1 bg-grey-7 text-grey-2 font-bold rounded"
+              >
+                <CautionIcon />
+                <div>{fileProblem}</div>
+                <div className="flex-grow" />
+                {selectedFile?.type === 'File' && (
+                  <Button onClick={() => onSelectFile(selectedFile)}>
+                    Use anyway
+                  </Button>
+                )}
+                <Button onClick={() => setFileProblem(null)}>Dismiss</Button>
+              </div>
+            )}
+          </div>
         </>
       )}
     </ModalDialog>

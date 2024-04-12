@@ -43,6 +43,15 @@ export type File = FileBase & {
 
   /** Duration of audio or video in seconds. */
   duration?: number;
+
+  /**
+   * API call to check this file's suitability for an assignment.
+   *
+   * If present, this can be called after the user makes a selection to check
+   * for possible problems when the file is used in an assignment. The call
+   * will return 2xx if OK or 4xx with error details if there is a problem.
+   */
+  check?: APICallInfo;
 };
 
 export type Folder = FileBase & {
