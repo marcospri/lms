@@ -45,8 +45,7 @@ class HAPI:
     class HAPIGroup:
         authority_provided_id: str
 
-    def __init__(
-        # pylint: disable=too-many-arguments
+    def __init__(  # noqa: PLR0913
         self,
         authority,
         client_id,
@@ -191,8 +190,7 @@ class HAPI:
         )
         return response.json()
 
-    # pylint: disable=too-many-arguments
-    def _api_request(self, method, path, body=None, headers=None, stream=False):
+    def _api_request(self, method, path, body=None, headers=None, stream=False):  # noqa: PLR0913
         """
         Send any kind of HTTP request to the h API and return the response.
 
