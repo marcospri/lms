@@ -76,7 +76,7 @@ class CourseService:
             copied_from=historical_course,
         )
 
-    def search(  # noqa: PLR0913
+    def search(  # noqa: PLR0913, PLR0917
         self,
         id_: int | None = None,
         context_id: str | None = None,

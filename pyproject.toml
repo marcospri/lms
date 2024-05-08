@@ -97,6 +97,8 @@ disable = [
     "unused-argument",
     "broad-exception-caught",
     "too-many-arguments",
+    "import-outside-toplevel",
+    "too-many-statements",
 
 ]
 
@@ -120,6 +122,7 @@ select = [
   "ARG", # https://docs.astral.sh/ruff/rules/#flake8-unused-arguments-arg
   "BLE001", # https://docs.astral.sh/ruff/rules/blind-except/
   "R", "PLR", # https://docs.astral.sh/ruff/rules/#refactor-r
+  "C", "PLC", # https://docs.astral.sh/ruff/rules/#convention-c
 ]
 
 ignore = [
@@ -156,6 +159,14 @@ ignore = [
     # Disabled during the pylint migration, ideally we'll enable this after we are settled in ruff
     "RET504",
     "RET501",
+    "PLR6301",
+    "PLR6201",
+    "PLR1702",
+    "C405",
+    "C401",
+    "PLC1901",
+    "E721",
+    "C414",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -170,6 +181,14 @@ ignore = [
     "D",
     
     "PLR0913",
+
+    # Lots of test methods don't use self, but we still want to group our tests
+    # into classes.
+    "PLR6301",
+
+    "PLR0917", # too-many-arguments
+    "PLC2701", # private import
+    "PLR0904", # too-many-public-methods
 ] 
 
 [tool.hdev]
