@@ -42,8 +42,7 @@ class DashboardViews:
         response = HTTPFound(
             location=self.request.route_url(
                 "dashboard.assignment",
-                # pylint:disable=protected-access
-                public_id=self.request.lti_user.application_instance.organization._public_id,
+                public_id=self.request.lti_user.application_instance.organization._public_id,  # noqa: SLF001
                 id_=assignment_id,
             ),
         )
@@ -144,8 +143,7 @@ class DashboardViews:
             secure=not self.request.registry.settings["dev"],
             httponly=True,
             # Scope the cookie to all the org endpoints
-            # pylint:disable=protected-access
-            path=f"/dashboard/organization/{lti_user.application_instance.organization._public_id}",
+            path=f"/dashboard/organization/{lti_user.application_instance.organization._public_id}",  # noqa: SLF001
             max_age=60 * 60 * 24,  # 24 hours, matches the lifetime of the auth_token
         )
         return response

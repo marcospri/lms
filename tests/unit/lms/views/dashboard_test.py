@@ -13,7 +13,6 @@ from tests import factories
 pytestmark = pytest.mark.usefixtures("h_api", "assignment_service")
 
 
-# pylint:disable=protected-access
 class TestDashboardViews:
     @freeze_time("2024-04-01 12:00:00")
     def test_assignment_redirect_from_launch(
@@ -28,12 +27,12 @@ class TestDashboardViews:
         )
         assert response == Any.instance_of(HTTPFound).with_attrs(
             {
-                "location": f"http://example.com/dashboard/organization/{organization._public_id}/assignment/sentinel.id",
+                "location": f"http://example.com/dashboard/organization/{organization._public_id}/assignment/sentinel.id",  # noqa: SLF001
             }
         )
         assert (
             response.headers["Set-Cookie"]
-            == f"authorization=TOKEN; Max-Age=86400; Path=/dashboard/organization/{organization._public_id}; expires=Tue, 02-Apr-2024 12:00:00 GMT; secure; HttpOnly"
+            == f"authorization=TOKEN; Max-Age=86400; Path=/dashboard/organization/{organization._public_id}; expires=Tue, 02-Apr-2024 12:00:00 GMT; secure; HttpOnly"  # noqa: SLF001
         )
 
     @freeze_time("2024-04-01 12:00:00")
@@ -54,7 +53,7 @@ class TestDashboardViews:
         )
         assert (
             pyramid_request.response.headers["Set-Cookie"]
-            == f"authorization=TOKEN; Max-Age=86400; Path=/dashboard/organization/{organization._public_id}; expires=Tue, 02-Apr-2024 12:00:00 GMT; secure; HttpOnly"
+            == f"authorization=TOKEN; Max-Age=86400; Path=/dashboard/organization/{organization._public_id}; expires=Tue, 02-Apr-2024 12:00:00 GMT; secure; HttpOnly"  # noqa: SLF001
         )
 
     def test_assignment_show_with_no_lti_user(
