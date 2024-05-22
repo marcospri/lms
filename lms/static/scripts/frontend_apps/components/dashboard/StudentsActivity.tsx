@@ -49,20 +49,20 @@ export default function StudentsActivity() {
             students.error ? 'Could not load students' : 'No students found'
           }
           title={assignment.isLoading ? 'Loading...' : title}
+          rows={orderedStudents}
           columns={[
-            { field: 'display_name', label: 'Name', classes: 'w-[60%]' },
+            { field: 'display_name', label: 'Student', classes: 'w-[60%]' },
             { field: 'annotations', label: 'Annotations' },
             { field: 'replies', label: 'Replies' },
             { field: 'last_activity', label: 'Last Activity' },
           ]}
-          rows={orderedStudents}
           renderItem={(stats, field) => {
             if (['annotations', 'replies'].includes(field)) {
               return <div className="text-right">{stats[field]}</div>;
             }
 
-            return field === 'last_activity' && stats[field]
-              ? formatDateTime(new Date(stats[field]))
+            return field === 'last_activity' && stats.last_activity
+              ? formatDateTime(new Date(stats.last_activity))
               : stats[field];
           }}
           loading={students.isLoading}

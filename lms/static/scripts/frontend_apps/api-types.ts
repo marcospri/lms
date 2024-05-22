@@ -143,20 +143,45 @@ export type YouTubeVideoInfo = {
   restrictions: YouTubeVideoRestriction[];
 };
 
-/**
- * Individual items in response for `/api/assignment/{assignment_id}/stats` call.
+/*
+ * Dashboard-related API types
  */
-export type StudentStats = {
-  display_name: string;
-  last_activity: string;
+
+export type BaseDashboardStats = {
+  last_activity: string | null;
   annotations: number;
   replies: number;
 };
 
 /**
- * Response for `/api/assignment/{assignment_id}` call.
+ * Response for `/dashboard/api/assignment/{assignment_id}` call.
  */
 export type Assignment = {
   id: number;
   title: string;
+};
+
+/**
+ * Individual items in response for `/dashboard/api/assignment/{assignment_id}/stats` call.
+ */
+export type StudentStats = BaseDashboardStats & {
+  display_name: string;
+};
+
+/**
+ * Response for `/dashboard/api/course/{course_id}` call.
+ */
+export type Course = {
+  id: number;
+  title: string;
+};
+
+/**
+ * Individual items in response for `/dashboard/api/course/{course_id}/stats` call.
+ */
+export type AssignmentStats = {
+  id: number;
+  title: string;
+  course: Course;
+  stats: BaseDashboardStats;
 };
