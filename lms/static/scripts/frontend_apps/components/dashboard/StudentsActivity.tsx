@@ -25,6 +25,7 @@ export default function StudentsActivity() {
   );
   const students = useAPIFetch<StudentStats[]>(
     replaceURLParams(routes.assignment_stats, { assignment_id: assignmentId }),
+    { reportToInitialLoading: true },
   );
 
   const title = `Assignment: ${assignment.data?.title}`;

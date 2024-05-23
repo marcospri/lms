@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useContext, useEffect, useRef, useState } from 'preact/hooks';
+
+import { InitialLoadingContext } from './initial-loading-context';
 
 export type FetchResult<T> = {
   data: T | null;
@@ -30,6 +32,11 @@ export type FetchResult<T> = {
  */
 export type Fetcher<T> = (signal: AbortSignal) => Promise<T>;
 
+export type UseFetchOptions = {
+  /** Whether this fetch should be reported to the InitialLoadingContext */
+  reportToInitialLoading?: boolean;
+};
+
 /**
  * Hook that fetches data from the backend API or some other async data source.
  *
@@ -50,7 +57,12 @@ export type Fetcher<T> = (signal: AbortSignal) => Promise<T>;
 export function useFetch<T = unknown>(
   key: string | null,
   fetcher?: Fetcher<T>,
+  { reportToInitialLoading }: UseFetchOptions = {},
 ): FetchResult<T> {
+  // If an InitialLoadingContext is found, we want to notify about loading
+  // start/finish
+  const initialLoading = useContext(InitialLoadingContext);
+
   const [result, setResult] = useState<FetchResult<T>>({
     data: null,
     error: null,
@@ -87,6 +99,9 @@ export function useFetch<T = unknown>(
 
     const fetcher = lastFetcher.current;
     const doFetch = () => {
+      if (reportToInitialLoading) {
+        initialLoading?.startLoading(key);
+      }
       fetcher(controller.signal)
         .then(data => {
           if (!controller.signal.aborted) {
@@ -109,6 +124,11 @@ export function useFetch<T = unknown>(
               retry: doFetch,
             });
           }
+        })
+        .finally(() => {
+          if (reportToInitialLoading) {
+            initialLoading?.finishLoading(key);
+          }
         });
     };
     doFetch();
@@ -117,7 +137,7 @@ export function useFetch<T = unknown>(
       // Cancel in-flight request if query changes or component is unmounted.
       controller.abort();
     };
-  }, [key]);
+  }, [initialLoading, key, reportToInitialLoading]);
 
   return result;
 }

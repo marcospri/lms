@@ -1,13 +1,14 @@
 import classnames from 'classnames';
 import { Route } from 'wouter-preact';
 
+import HideUntilLoad from '../HideUntilLoad';
 import DashboardFooter from './DashboardFooter';
 import StudentsActivity from './StudentsActivity';
 
 export default function DashboardApp() {
   return (
-    <div className="flex flex-col min-h-screen gap-5 bg-grey-2">
-      <div
+    <div className="flex flex-col min-h-screen bg-grey-2">
+      <header
         className={classnames(
           'flex justify-center p-3 w-full',
           'bg-white border-b shadow',
@@ -18,14 +19,14 @@ export default function DashboardApp() {
           src="/static/images/hypothesis-wordmark-logo.png"
           className="h-10"
         />
-      </div>
-      <div className="flex-grow px-3">
-        <div className="mx-auto max-w-6xl">
+      </header>
+      <HideUntilLoad classes="flex-grow">
+        <div className="mx-auto max-w-6xl px-3 py-5">
           <Route path="/assignment/:assignmentId">
             <StudentsActivity />
           </Route>
         </div>
-      </div>
+      </HideUntilLoad>
       <DashboardFooter />
     </div>
   );
