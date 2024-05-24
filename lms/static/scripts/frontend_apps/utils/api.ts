@@ -110,6 +110,12 @@ export async function apiCall<Result = unknown>(
   const resultJSON = await result.json();
 
   if (result.status >= 400 && result.status < 600) {
+    if (result.status === 409) {
+      // TODO - Limit the number of retries.
+      console.warn('Retrying request due to 409 response...');
+      return apiCall(options);
+    }
+
     // Refresh expired access tokens for external APIs, if required. Only one
     // such request should be issued by the frontend for a given API at a time.
     if (allowRefresh && result.status === 400 && isRefreshError(resultJSON)) {
